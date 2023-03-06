@@ -8,7 +8,11 @@ const projectSchema = Schema({
     description: String,
     github: String,
     technologies: [String],
-    deployed: String
+    deployed: String,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 }, {
     timestamps: true
 })

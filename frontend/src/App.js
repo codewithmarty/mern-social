@@ -5,13 +5,13 @@ import Navbar from './components/Navbar/Navbar';
 import Cards from './pages/Cards/Cards';
 import Detail from './pages/Detail/Detail';
 import { Routes, Route } from 'react-router-dom';
+import Login from './pages/Login/Login';
+import Signup from './pages/Signup/Signup';
+import Landing from './pages/Landing/Landing';
 
 const App = () => {
 
-  const [user, setUser] = useState({
-    name: 'Martin Nicola',
-    pic: 'https://media.licdn.com/dms/image/D5603AQGScr8t6VKgpg/profile-displayphoto-shrink_800_800/0/1669439672645?e=1683763200&v=beta&t=ksQhcFfwg_Yn__nKbynoMUzDcqxGP9dUhBS-TVRkmDU'
-  })
+  const [user, setUser] = useState(null)
 
   const [users, setUsers] = useState([
     {
@@ -194,9 +194,20 @@ const App = () => {
     <div className="App">
       <Navbar user={user}/>
       <Routes>
-        <Route path="/" element={<Cards users={users} setDetails={setDetails}/>} />
-        <Route path="/messenger" element={<Messenger user={user} />} />      
-        <Route path="/:id" element={<Detail details={details}/>} />
+        {
+        user ? 
+          <>        
+            <Route path="/" element={<Cards users={users} setDetails={setDetails}/>} />
+            <Route path="/messenger" element={<Messenger user={user} />} />      
+            <Route path="/:id" element={<Detail details={details}/>} />
+          </>
+        :
+        <>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login setUser={setUser}/>} />
+          <Route path="/signup" element={<Signup setUser={setUser}/>} /> 
+        </>
+        }
       </Routes>
     </div>
   );

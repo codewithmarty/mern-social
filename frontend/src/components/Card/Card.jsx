@@ -7,7 +7,7 @@ const Card = ({ user, id, setDetails }) => {
         <img src={user.pic} className="card-image card-img-top" alt="..." />
         <div className="card-body">
             <h5 className="card-title text-primary">{user.name}</h5>
-            <h6 class="card-title text-success">{user.role}</h6>
+            <h6 className="card-title text-success">{user.role}</h6>
             <p className="card-text text-secondary">{user.bio.substring(0, 120)+"..."}</p>
             <Link to={"/"+id} className="btn btn-primary">See More</Link>
         </div>

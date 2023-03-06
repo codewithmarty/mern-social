@@ -62,3 +62,32 @@
   height: 400px;
   object-fit: cover;
 }
+
+.jumbotron {
+  background-color: #e9ecef;
+  margin-bottom: 0;
+  height: 100vh;
+  display: flex;
+  background: url('https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg');
+  align-items: center;
+}
+
+.middle-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+/* Styles for the header */
+.header {
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+}
+
+/* Styles for the footer */
+.footer {
+  background-color: #343a40;
+  color: #fff;
+  padding: 20px;
+}
