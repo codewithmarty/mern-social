@@ -46,6 +46,10 @@
   100% { opacity: 1; }
 }
 
+nav {
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,.2);
+}
+
 .fa {
   font-size: 50px;
   margin: 10px;
@@ -63,6 +67,10 @@
   object-fit: cover;
 }
 
+.cards {
+  margin: 5rem 10%;
+}
+
 .jumbotron {
   background-color: #e9ecef;
   margin-bottom: 0;
@@ -76,6 +84,30 @@
   height: 100vh;
   display: flex;
   align-items: center;
+}
+
+.jumbotron-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0 auto;
+  background: rgba(0,0,0,0.5);
+  padding: 20px;
+  border-radius: 1rem;
+  min-height: 22rem;
+}
+
+.jumbotron-container h1,
+.jumbotron-container p {
+  color: beige;
+}
+
+.jumbotron-container a {
+  margin: 0 auto;
+}
+
+.container a {
+  margin: 0 auto;
 }
 
 /* Styles for the header */

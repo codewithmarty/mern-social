@@ -3,6 +3,20 @@ const Schema = mongoose.Schema
 const bcrypt = require('bcrypt');
 const SALT_ROUNDS = 6;
 
+const projectSchema = Schema({
+    name: String,
+    img: String,
+    description: String,
+    github: String,
+    technologies: [String],
+    deployed: String,
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
+}, {
+    timestamps: true
+})
 
 const userSchema = Schema({
     firstName: String,
@@ -29,6 +43,7 @@ const userSchema = Schema({
         type: String,
         default: ''
     },
+    projects: [projectSchema]
 }, {
     timestamps: true,
     toJSON: {

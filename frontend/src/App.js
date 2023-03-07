@@ -8,10 +8,13 @@ import { Routes, Route } from 'react-router-dom';
 import Login from './pages/Login/Login';
 import Signup from './pages/Signup/Signup';
 import Landing from './pages/Landing/Landing';
+import { getUser } from './utilities/users-service';
+import { getUsers } from './utilities/users-api';
+import Edit from './pages/Profile/Edit';
 
 const App = () => {
 
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(getUser())
 
   const [users, setUsers] = useState([
     {
@@ -184,22 +187,32 @@ const App = () => {
     }
   ])
 
-  const [details, setDetails] = useState(null)
+  const [details, setDetails] = useState(getUser())
 
   useEffect(() => {
-    console.log('new user')
+    async function fetchData() {
+      setUsers(await getUsers())
+    }
+    fetchData()
   }, [])
+
+  const handleLogout = () => {
+    setUser(null)
+    localStorage.removeItem('token')
+  }
+
 
   return (
     <div className="App">
-      <Navbar user={user}/>
+      <Navbar user={user} handleLogout={handleLogout} setDetails={setDetails}/>
       <Routes>
         {
         user ? 
           <>        
             <Route path="/" element={<Cards users={users} setDetails={setDetails}/>} />
             <Route path="/messenger" element={<Messenger user={user} />} />      
-            <Route path="/:id" element={<Detail details={details}/>} />
+            <Route path="/:id" element={<Detail details={details} user={user}/>} />
+            <Route path="/profile/edit" element={<Edit />} />
           </>
         :
         <>

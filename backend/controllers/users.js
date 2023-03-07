@@ -31,7 +31,23 @@ function createJWT(user) {
     );
 }
 
+function checkToken(req, res) {
+    res.json(req.exp);
+}
+
+async function index(req, res) {
+    try {
+        let users = await User.find({ _id: { $ne: req.user._id } })
+        console.log(users)
+        res.status(200).json(users)
+    } catch(err) {
+        res.status(400).json(err)
+    }
+}
+
 module.exports = {
     login,
-    signup
+    signup,
+    checkToken,
+    index
 }

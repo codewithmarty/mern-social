@@ -1,7 +1,8 @@
 import React from 'react'
 import Project from '../../components/Project/Project'
+import { Link } from 'react-router-dom'
 
-const Detail = ({ details }) => {
+const Detail = ({ details, user }) => {
   return (
         <div className="container my-5 fade-in-image">
             <div className="row">
@@ -12,7 +13,12 @@ const Detail = ({ details }) => {
                 </div>
                 <div className="col-md-7">
                     <div className="main-description px-2">
-                        <h2>{details.name}</h2>
+                        <h2>{details.firstName} {details.lastName}</h2>
+                        {details._id == user._id ? 
+                            <Link className="btn btn-primary" to="/profile/edit">Edit Profile</Link>
+                        :
+                            <></>
+                        }
                         <div className="category text-bold text-success">
                             {details.role}
                         </div>

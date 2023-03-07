@@ -1,24 +1,25 @@
 import React, { useState } from 'react'
 import { login } from '../../utilities/users-service'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
-const Login = () => {
+const Login = ({ setUser }) => {
+
+    const navigate = useNavigate()
 
     const [formData, setFormData] = useState({
         email: '',
         password: '',
-        confirmPassword: '',
     })
 
     const handleChange = (evt) => {
         setFormData({...formData, [evt.target.name]: evt.target.value})
     }
 
-    const handleSubmit = (evt) => {
+    const handleSubmit = async (evt) => {
         evt.preventDefault()
-        const user = formData
-        delete user['confirmPassword']
-        login(user)
+        const data = formData
+        setUser(await login(data))
+        navigate('/')
     }
 
   return (
@@ -32,10 +33,6 @@ const Login = () => {
             <div className="mb-3">
                 <label className="form-label">Password</label>
                 <input name='password' type="password" className="form-control" id="exampleInputPassword1" onChange={handleChange}/>
-            </div>
-            <div className="mb-3">
-                <label className="form-label">Confirm Password</label>
-                <input name='confirmPassword' type="password" className="form-control" id="exampleInputPassword1" onChange={handleChange}/>
             </div>
             <button type="submit" className="btn btn-primary">Login</button>
         </form>

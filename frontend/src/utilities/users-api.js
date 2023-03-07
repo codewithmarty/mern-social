@@ -13,3 +13,7 @@ export function login(credentials) {
   return sendRequest(`${BASE_URL}/login`, 'POST', credentials)
   
 }
+
+export function getUsers() {
+  return sendRequest(BASE_URL)
+}

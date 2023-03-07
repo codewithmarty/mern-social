@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { signUp } from '../../utilities/users-service'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
-const Signup = () => {
+const Signup = ({ setUser }) => {
+
+    const navigate = useNavigate()
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -16,11 +18,12 @@ const Signup = () => {
         setFormData({...formData, [evt.target.name]: evt.target.value})
     }
 
-    const handleSubmit = (evt) => {
+    const handleSubmit = async (evt) => {
         evt.preventDefault()
-        const user = formData
-        delete user['confirmPassword']
-        signUp(user)
+        const data = formData
+        delete data['confirmPassword']
+        setUser(await signUp(data))
+        navigate('/')
     }
 
   return (

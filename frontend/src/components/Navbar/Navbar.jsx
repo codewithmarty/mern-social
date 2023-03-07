@@ -2,7 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 
-const Navbar = ({ user }) => {
+const Navbar = ({ user, handleLogout, setDetails }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
     <div className="container-fluid">
@@ -15,27 +15,28 @@ const Navbar = ({ user }) => {
             <li className="nav-item">
                 <Link className="nav-link active" aria-current="page" to="/">Home</Link>
             </li>
-            <li className="nav-item">
-                <Link className="nav-link" to="/login">Login</Link>
-            </li>
-            { user && 
+           
+            { user ?
             <>          
                 <li className="nav-item">
-                    <Link className="nav-link" to="/messenger">Messenger</Link>
+                    <Link className="nav-link" to="/profile" onClick={() => setDetails(user)}>Profile</Link>
                 </li>
                 <li className="nav-item dropdown">
                 <Link className="nav-link dropdown-toggle" to="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Dropdown
+                    More
                 </Link>
                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><Link className="dropdown-item" to="#">Action</Link></li>
+                    <li><Link className="dropdown-item" to="/messenger">Messenger</Link></li>
                     <li><Link className="dropdown-item" to="#">Another action</Link></li>
                     <li><hr className="dropdown-divider" /></li>
-                    <li><Link className="dropdown-item" to="#">Something else here</Link></li>
+                    <li><Link className="dropdown-item" onClick={handleLogout} to="/">Logout</Link></li>
                 </ul>
                 </li>
             </>
-            
+            :
+            <li className="nav-item">
+                <Link className="nav-link" to="/login">Login</Link>
+            </li>
             }
 
             </ul>
