@@ -1,21 +1,59 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Project from '../../components/Project/Project'
 import { Link } from 'react-router-dom'
+import { uploadImage } from '../../utilities/users-api'
 
-const Detail = ({ details, user }) => {
+const Detail = ({ details, user, setDetails, setUser }) => {
+
+    const [overlayClass, setOverlayClass] = useState("overlay hide-overlay")
+    const [loaderClass, setLoaderClass] = useState("loader loader-hide")
+    const [photo, setPhoto] = useState(null)
+
+    const toggleOverlay = () => {
+        setOverlayClass(overlayClass == "overlay hide-overlay" ? "overlay fade-in-image" : "overlay hide-overlay")
+    }
+
+    const handleChange = (evt) => {
+        setPhoto(evt.target.files[0])
+    }
+
+    const handleImageUpload = (evt) => {
+        evt.preventDefault()
+        const data = new FormData()
+        data.append('file', photo)
+        uploadImage(data).then(res => {
+            setLoaderClass("loader")
+            setTimeout(() => { 
+                setUser(res.data) 
+                setDetails(res.data)
+                setLoaderClass("loader loader-hide") 
+                toggleOverlay()
+            }
+            , 3000)
+        })
+    }
+
   return (
         <div className="container my-5 fade-in-image">
             <div className="row">
                 <div className="col-md-5">
                     <div className="main-img">
                         <img className="img-fluid w-100 card-image rounded" src={details.pic} alt="ProductS" />
+                        {details._id == user._id ? 
+                            <div className="btn btn-primary rounded-circle m-2" onClick={toggleOverlay}>+</div>
+                        :
+                            <></>
+                        }   
                     </div>
                 </div>
                 <div className="col-md-7">
                     <div className="main-description px-2">
                         <h2>{details.firstName} {details.lastName}</h2>
                         {details._id == user._id ? 
-                            <Link className="btn btn-primary" to="/profile/edit">Edit Profile</Link>
+                        <>
+                            <Link className="btn btn-primary edit" to="/profile/edit">Edit Profile</Link>
+                            <Link className="btn btn-primary edit" to="/profile/addProject">Add Projects</Link>
+                        </>
                         :
                             <></>
                         }
@@ -48,6 +86,18 @@ const Detail = ({ details, user }) => {
                 })}
             </div>
         </div>
+        {details._id == user._id ? 
+            <div className={overlayClass}>
+                <form onSubmit={handleImageUpload}>
+                    <input type="file" name="image" id="image" accept="image/*" onChange={handleChange} />
+                    <button type="submit">Upload</button>
+                    <div className="btn btn-danger rounded-circle m-2" onClick={toggleOverlay}>x</div>
+                    <div class={loaderClass}></div>
+                </form>
+            </div>
+        :
+            <></>
+        }
     </div>
   )
 }

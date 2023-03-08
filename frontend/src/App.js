@@ -11,6 +11,7 @@ import Landing from './pages/Landing/Landing';
 import { getUser } from './utilities/users-service';
 import { getUsers } from './utilities/users-api';
 import Edit from './pages/Profile/Edit';
+import AddProject from './pages/Profile/AddProject';
 
 const App = () => {
 
@@ -211,8 +212,9 @@ const App = () => {
           <>        
             <Route path="/" element={<Cards users={users} setDetails={setDetails}/>} />
             <Route path="/messenger" element={<Messenger user={user} />} />      
-            <Route path="/:id" element={<Detail details={details} user={user}/>} />
-            <Route path="/profile/edit" element={<Edit />} />
+            <Route path="/:id" element={<Detail details={details} user={user} setDetails={setDetails} setUser={setUser} />} />
+            <Route path="/profile/edit" element={<Edit setUser={setUser} setDetails={setDetails} />} />
+            <Route path="/profile/addProject" element={<AddProject setUser={setUser} setDetails={setDetails} />} />
           </>
         :
         <>

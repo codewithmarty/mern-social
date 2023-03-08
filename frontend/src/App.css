@@ -58,6 +58,7 @@ nav {
 .bio,
 .project-description {
   text-align: justify;
+  text-align-last: center;
 }
 
 .project-image,
@@ -107,7 +108,7 @@ nav {
 }
 
 .container a {
-  margin: 0 auto;
+  margin: 5px;
 }
 
 /* Styles for the header */
@@ -122,4 +123,106 @@ nav {
   background-color: #343a40;
   color: #fff;
   padding: 20px;
+}
+
+.plus-button {
+  display: inline-block;
+  background-color: #007bff;
+  position: relative;
+  right: -25%;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 28px;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.plus-button:hover {
+  background-color: #0062cc;
+}
+
+.plus-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
+}
+
+.plus-button span {
+  display: block;
+  transform: translateY(-2px);
+}
+
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+form {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+
+label {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 2px solid #007bff;
+  cursor: pointer;
+}
+
+label:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.hide-overlay {
+  display: none;
+}
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #0062cc;
+}
+
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+.loader-hide {
+  display: none;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
