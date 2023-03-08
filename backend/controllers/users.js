@@ -2,6 +2,7 @@ const User = require('../models/user')
 const jwt = require('jsonwebtoken')
 const aws = require('aws-sdk')
 const fs = require('fs')
+const path = require("path");
 aws.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY})
 const s3Bucket = new aws.S3({ params: { Bucket: process.env.AWS_BUCKET}})
 const BASE_URL = `https://${process.env.AWS_BUCKET}.s3.ca-central-1.amazonaws.com`
@@ -78,14 +79,14 @@ async function uploadPhoto(req, res) {
         const user = await User.findById(req.user._id)
         user.pic = `${BASE_URL}/${req.file.filename}.jpeg`
         user.save()
-        uploadFileOnS3(`${req.file.filename}.jpeg`, fs.readFileSync(req.file.path))
-        res.status(200).json(user)
+        uploadFileOnS3(`${req.file.filename}.jpeg`, fs.readFileSync(req.file.path), res, user)
+        // deleteUploads()
     } catch (err) {
         res.status(400).json(err)
     }
 }
 
-function uploadFileOnS3(fileName, fileData) {
+function uploadFileOnS3(fileName, fileData, resp, user) {
     var params = {
       Key: fileName,
       Body: fileData,
@@ -94,11 +95,26 @@ function uploadFileOnS3(fileName, fileData) {
       if (err) {
         console.log("Error in uploading file on s3 due to " + err);
       } else {
-        console.log("File successfully uploaded.");
+        console.log(`${fileName} successfully uploaded on Amazon S3`)
+        deleteUploads()
+        resp.status(200).json(user)
       }
     });
 }
 
+function deleteUploads() {
+    const directory = "uploads/";
+    
+    fs.readdir(directory, (err, files) => {
+      if (err) throw err;
+    
+      for (const file of files) {
+        fs.unlink(path.join(directory, file), (err) => {
+          if (err) throw err;
+        });
+      }
+    });
+}
 
 module.exports = {
     login,
