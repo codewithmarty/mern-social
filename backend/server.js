@@ -3,15 +3,59 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const socketio = require('socket.io')
+const http = require('http')
+const cors = require('cors')
 
 require('dotenv').config()
 
 require('./config/database')
 
-
-var indexRouter = require('./routes/index');
-
 var app = express();
+app.use(cors())
+const server = http.createServer(app)
+const io = socketio(server)
+const port = process.env.PORT || 3001
+
+let activeUsers = [];
+
+const newUser = (userId, socketId) => {
+  if (!activeUsers.some(user => user.userId === userId)) {
+    activeUsers.push({userId: userId, socketId: socketId})
+  } 
+}
+
+const delUser = (socketId) => {
+  activeUsers = activeUsers.filter(user => user.socketId !== socketId)
+}
+
+const fetchUser = (userId) => {
+  return activeUsers.find(user => user.userId == userId)
+}
+
+io.on("connection", (socket) => {
+  console.log(`Socket ${socket.id} has connected`)
+  socket.on("send_user", userId => {
+    newUser(userId, socket.id)
+    io.emit("get_users", activeUsers)
+  })
+
+  socket.on("send_message", data => {
+    console.log(data)
+    console.log(activeUsers)
+    const receiver = fetchUser(data.receiver._id);
+    console.log(receiver)
+    if (receiver) {
+      io.to(receiver.socketId).emit("get_message", data)
+    }
+  })
+
+  socket.on("disconnect", () => {
+    delUser(socket.id)
+    io.emit("get_users", activeUsers)
+  })
+
+})
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,8 +68,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require('./config/checkToken'));
 
-app.use('/', indexRouter);
 app.use('/api/users', require('./routes/users'));
+
+app.get('/*', function(req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -43,4 +90,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`)
+})

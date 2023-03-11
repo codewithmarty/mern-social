@@ -1,4 +1,6 @@
 const User = require('../models/user')
+const Friendship = require('../models/friendship')
+const Message = require('../models/message')
 const jwt = require('jsonwebtoken')
 const aws = require('aws-sdk')
 const fs = require('fs')
@@ -6,7 +8,6 @@ const path = require("path");
 aws.config.update({ accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY})
 const s3Bucket = new aws.S3({ params: { Bucket: process.env.AWS_BUCKET}})
 const BASE_URL = `https://${process.env.AWS_BUCKET}.s3.ca-central-1.amazonaws.com`
-
 
 async function login(req, res) {
     try {
@@ -104,16 +105,76 @@ function uploadFileOnS3(fileName, fileData, resp, user) {
 
 function deleteUploads() {
     const directory = "uploads/";
-    
     fs.readdir(directory, (err, files) => {
       if (err) throw err;
-    
       for (const file of files) {
         fs.unlink(path.join(directory, file), (err) => {
           if (err) throw err;
         });
       }
     });
+}
+
+async function handleFriendRequest(req, res) {
+    try {
+        const existingFriendship = await Friendship.findOne({ $or: [{firstUser: req.user._id}, {secondUser: req.user._id}] })
+        if (existingFriendship) {
+            existingFriendship.confirmed = true
+            existingFriendship.save()
+            res.status(200).json(existingFriendship)
+        } else {
+            const friendship = await Friendship.create(req.body)
+            res.status(200).json(friendship)
+        }
+    } catch(err) {
+        res.status(400).json(err)
+    }
+}
+
+async function getFriendships(req, res) {
+    try {
+        const friendships = await Friendship.find({ $or: [{firstUser: req.user._id}, {secondUser: req.user._id}] })
+        .populate([
+            'firstUser', 
+            'secondUser', 
+        ])
+        res.status(200).json(friendships)
+    } catch(err) {
+        res.status(400).json(err)
+    }
+}
+
+async function getMessages(req, res) {
+    try {
+        const messages = await Message.find({ friendship: req.params.conversationId })
+        .populate([
+            'sender',
+            'receiver'
+        ])
+        res.status(200).json(messages)
+    } catch(err) {
+        console.log(err)
+        res.status(400).json(err)
+    }
+}
+
+async function newMessage(req, res) {
+    try {
+        const friendship = await Friendship.findById(req.body.friendship)
+        if (req.body.sender._id == friendship.firstUser) {
+            req.body.receiver = friendship.secondUser
+        } else {
+            req.body.receiver = friendship.firstUser
+        }
+        friendship.lastSentMessage = req.body.body
+        friendship.save()
+        const message = await Message.create(req.body)
+        message.sender = await User.findById(message.sender)
+        message.receiver = await User.findById(message.receiver)
+        res.status(200).json(message) 
+    } catch(err) {
+        res.status(400).json(err)
+    }
 }
 
 module.exports = {
@@ -123,5 +184,9 @@ module.exports = {
     index,
     updateBioLinks,
     addProject,
-    uploadPhoto
+    uploadPhoto,
+    handleFriendRequest,
+    getFriendships,
+    getMessages,
+    newMessage
 }

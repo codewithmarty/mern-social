@@ -11,5 +11,9 @@ router.post('/', usersCtrl.signup)
 router.put('/', usersCtrl.updateBioLinks)
 router.put('/addProject', usersCtrl.addProject)
 router.put('/uploadPhoto', upload.single('file'), usersCtrl.uploadPhoto)
+router.post('/sendFriendRequest', usersCtrl.handleFriendRequest)
+router.get('/getFriendships', usersCtrl.getFriendships)
+router.get('/getMessages/:conversationId', usersCtrl.getMessages)
+router.post('/newMessage', usersCtrl.newMessage)
 
 module.exports = router

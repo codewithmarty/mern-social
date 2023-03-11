@@ -9,7 +9,12 @@ const friendshipSchema = Schema({
     secondUser: {
         type: Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    confirmed: {
+        type: Boolean,
+        default: false
+    },
+    lastSentMessage: String,
 }, {
     timestamps: true
 })
