@@ -46,7 +46,6 @@ function checkToken(req, res) {
 async function index(req, res) {
     try {
         if (req.user) res.status(200).json(await User.find({ _id: { $ne: req.user._id } }))
-        else res.status(200).json(await User.find({}))
         } catch(err) {
         res.status(400).json(err)
     }

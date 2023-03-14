@@ -41,10 +41,7 @@ io.on("connection", (socket) => {
   })
 
   socket.on("send_message", data => {
-    console.log(data)
-    console.log(activeUsers)
     const receiver = fetchUser(data.receiver._id);
-    console.log(receiver)
     if (receiver) {
       io.to(receiver.socketId).emit("get_message", data)
     }
