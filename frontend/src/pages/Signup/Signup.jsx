@@ -28,7 +28,7 @@ const Signup = ({ setUser }) => {
 
   return (
     <>
-        <form onSubmit={handleSubmit}>
+        <form className="auth-form" onSubmit={handleSubmit}>
             <div className="mb-3">
                 <label className="form-label">First Name</label>
                 <input name='firstName' type="text" className="form-control" onChange={handleChange}/>

@@ -1,16 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Project from '../../components/Project/Project'
 import { Link } from 'react-router-dom'
-import { uploadImage } from '../../utilities/users-api'
+import { friendRequest, uploadImage } from '../../utilities/users-api'
 
 const Detail = ({ details, user, setDetails, setUser }) => {
 
     const [overlayClass, setOverlayClass] = useState("overlay hide-overlay")
     const [loaderClass, setLoaderClass] = useState("loader loader-hide")
+    const [status, setStatus] = useState(null)
     const [photo, setPhoto] = useState(null)
 
     const toggleOverlay = () => {
         setOverlayClass(overlayClass == "overlay hide-overlay" ? "overlay fade-in-image" : "overlay hide-overlay")
+        setLoaderClass("loader loader-hide")
     }
 
     const handleChange = (evt) => {
@@ -21,17 +23,29 @@ const Detail = ({ details, user, setDetails, setUser }) => {
         evt.preventDefault()
         const data = new FormData()
         data.append('file', photo)
+        setLoaderClass("loader")
         uploadImage(data).then(res => {
-            setLoaderClass("loader")
-            setTimeout(() => { 
-                setUser(res.data) 
-                setDetails(res.data)
-                setLoaderClass("loader loader-hide") 
-                toggleOverlay()
-            }
-            , 3000)
+            setUser(res.data) 
+            setDetails(res.data)
+            toggleOverlay()
         })
     }
+
+    const handleFriendRequest = () => {
+        friendRequest({ firstUser: user._id, secondUser: details._id }).then(res => {
+            setStatus(res)
+        })
+    }
+
+    useEffect(() => {
+        if (user._id === details._id) return
+        async function fetchFriendship() {
+            friendRequest({ firstUser: user._id, secondUser: details._id }).then(res => {
+                setStatus(res)
+            })
+        }
+        fetchFriendship()
+    }, [])
 
   return (
         <div className="container my-5 fade-in-image">
@@ -42,7 +56,28 @@ const Detail = ({ details, user, setDetails, setUser }) => {
                         {details._id == user._id ? 
                             <div className="btn btn-primary rounded-circle m-2" onClick={toggleOverlay}>+</div>
                         :
-                            <></>
+                            <>
+                                {
+                                status ?
+                                    <>
+                                    {status.firstUser == user._id && !status.confirmed ?
+                                        <div className="btn btn-primary m-2">Pending</div>
+                                    :
+                                    <>
+                                        {
+                                            status.confirmed ? 
+                                                <>You and {details.firstName} {details.lastName} are friends!</>                                            
+                                            :
+                                            <div className="btn btn-success m-2" onClick={handleFriendRequest}>Accept Friend</div>
+                                        
+                                        }
+                                        </>
+                                    }                                    
+                                    </>
+                                :
+                                    <div className="btn btn-primary m-2" onClick={handleFriendRequest}>Add Friend</div>
+                                }
+                            </>
                         }   
                     </div>
                 </div>
@@ -89,10 +124,12 @@ const Detail = ({ details, user, setDetails, setUser }) => {
         {details._id == user._id ? 
             <div className={overlayClass}>
                 <form onSubmit={handleImageUpload}>
-                    <input type="file" name="image" id="image" accept="image/*" onChange={handleChange} />
-                    <button type="submit">Upload</button>
-                    <div className="btn btn-danger rounded-circle m-2" onClick={toggleOverlay}>x</div>
-                    <div class={loaderClass}></div>
+                    <div>
+                        <input type="file" name="image" id="image" accept="image/*" onChange={handleChange} />
+                        <button type="submit">Upload</button>
+                        <div className="btn btn-danger rounded-circle m-2" onClick={toggleOverlay}>x</div>
+                    </div>
+                    <div className={loaderClass}></div>
                 </form>
             </div>
         :

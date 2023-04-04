@@ -46,3 +46,27 @@ export function uploadImage(data) {
   })
 
 }
+
+export function friendRequest(data) {
+
+  return sendRequest(BASE_URL+"/sendFriendRequest", 'POST', data)
+
+}
+
+export function getFriendships() {
+
+  return sendRequest(BASE_URL+"/getFriendships")
+
+}
+
+export function getMessages(body) {
+  
+  return sendRequest(BASE_URL+`/getMessages/${body.conversationId}`)
+
+}
+
+export function sendMessage(data) {
+
+  return sendRequest(BASE_URL+`/newMessage`, 'POST', data)
+
+}

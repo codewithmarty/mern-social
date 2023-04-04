@@ -24,7 +24,7 @@ const Login = ({ setUser }) => {
 
   return (
     <>    
-        <form onSubmit={handleSubmit}>
+        <form className="auth-form" onSubmit={handleSubmit}>
             <div className="mb-3">
                 <label className="form-label">Email address</label>
                 <input name='email' type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={handleChange}/>

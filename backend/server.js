@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const favicon = require('serve-favicon')
 const socketio = require('socket.io')
 const http = require('http')
 const cors = require('cors')
@@ -62,7 +63,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(favicon(path.join(__dirname, 'build', 'favicon.ico')));
+app.use(express.static(path.join(__dirname, 'build')));
 app.use(require('./config/checkToken'));
 
 app.use('/api/users', require('./routes/users'));
@@ -84,7 +86,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send('404');
 });
 
 server.listen(port, () => {
